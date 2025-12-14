@@ -1,0 +1,34 @@
+server {
+    listen 80;
+    server_name localhost;
+
+    # Указываем корневую директорию как стандартную папку html.
+    # Файлы лежат внутри в папке /NahuyNftbot, что соответствует URL.
+    root /usr/share/nginx/html;
+    
+    # Включаем сжатие gzip для ускорения загрузки
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+    # Основной блок для вашего приложения
+    location /NahuyNftbot/ {
+        # Логика:
+        # 1. Ищем точный файл ($uri)
+        # 2. Ищем папку ($uri/)
+        # 3. Если не нашли (например, маршрут /profile), отдаем index.html приложения
+        try_files $uri $uri/ /NahuyNftbot/index.html;
+    }
+
+    # Кеширование статических файлов (картинки, шрифты, скрипты)
+    location ~* \.(?:ico|css|js|gif|jpe?g|png|svg|woff2?)$ {
+        expires 6M;
+        access_log off;
+        add_header Cache-Control "public";
+    }
+
+    # Обработка ошибок 50x
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+}
